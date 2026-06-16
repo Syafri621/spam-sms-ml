@@ -1,175 +1,154 @@
-# 📱 Klasifikasi Spam SMS Menggunakan NLP & Machine Learning
+# Laporan Proyek Machine Learning 
 
-> Proyek Machine Learning | Metodologi CRISP-DM
+## Anggota:
+- Syafri Faadilah Putra - 2330511041
+- Praznandio Mahreinza - 2330511048
 
-[![Python](https://img.shields.io/badge/Python-3.10-blue?logo=python)](https://python.org)
-[![Scikit-Learn](https://img.shields.io/badge/scikit--learn-1.4-orange)](https://scikit-learn.org)
-[![Streamlit](https://img.shields.io/badge/Streamlit-1.32-red?logo=streamlit)](https://streamlit.io)
-[![NLP](https://img.shields.io/badge/NLP-TF--IDF-purple)](https://scikit-learn.org/stable/modules/feature_extraction.html)
+## Domain Proyek
 
----
+### Latar Belakang
 
-## 📋 Daftar Isi
+Spam SMS merupakan salah satu ancaman digital yang paling umum dialami oleh pengguna telepon seluler di seluruh dunia. Pesan spam dapat berupa penipuan finansial (phishing), iklan tidak diinginkan, hingga tautan berbahaya yang mengancam keamanan data pribadi pengguna. Berdasarkan laporan Statista (2023), lebih dari **45 miliar** pesan spam dikirimkan setiap harinya secara global, dan Indonesia termasuk negara dengan tingkat spam SMS yang cukup tinggi seiring meningkatnya penetrasi pengguna ponsel.
 
-- [Deskripsi Proyek](#deskripsi-proyek)
-- [Demo Aplikasi](#demo-aplikasi)
-- [Metodologi CRISP-DM](#metodologi-crisp-dm)
-- [Dataset](#dataset)
-- [Hasil dan Evaluasi](#hasil-dan-evaluasi)
-- [Struktur Repositori](#struktur-repositori)
-- [Cara Menjalankan](#cara-menjalankan)
-- [Teknologi](#teknologi)
-- [Anggota Tim](#anggota-tim)
+Deteksi spam secara manual tidak efisien dan tidak scalable. Oleh karena itu, dibutuhkan sistem otomatis berbasis Machine Learning yang mampu mengklasifikasikan pesan SMS secara cepat dan akurat untuk melindungi pengguna dari ancaman spam.
 
----
+Format Referensi: [SMS Spam Collection Dataset - UCI Repository](https://archive.ics.uci.edu/ml/datasets/SMS+Spam+Collection)
 
-## 📌 Deskripsi Proyek
+## Business Understanding
 
-Spam SMS merupakan ancaman serius yang merugikan miliaran pengguna ponsel setiap harinya. Pesan spam dapat berupa penipuan (phishing), iklan tidak diinginkan, hingga tautan berbahaya yang mengancam keamanan data pribadi.
+### Problem Statements
 
-Proyek ini membangun **sistem klasifikasi teks otomatis** menggunakan teknik **Natural Language Processing (NLP)** yang mampu membedakan pesan SMS **spam** dari **ham (pesan normal)** secara akurat dan real-time. Model diimplementasikan sebagai aplikasi web interaktif menggunakan Streamlit.
+Bagaimana cara membangun sistem klasifikasi teks otomatis yang mampu membedakan pesan SMS **spam** dari pesan **ham (normal)** secara akurat menggunakan teknik Natural Language Processing (NLP) dan Machine Learning?
 
-### Fitur Unggulan
+### Goals
 
-- Deteksi spam single pesan secara real-time
-- **Deteksi batch** — cek banyak pesan sekaligus
-- Visualisasi confidence score model
-- Detail pipeline preprocessing teks
-- Word cloud & feature importance analysis
+- Membangun model klasifikasi teks biner yang dapat membedakan SMS spam dan ham dengan akurasi tinggi.
+- Membandingkan performa beberapa algoritma Machine Learning untuk menemukan model terbaik dalam konteks klasifikasi teks.
+- Mengembangkan aplikasi web interaktif yang dapat digunakan secara langsung untuk mendeteksi spam SMS secara real-time.
 
----
+### Solution Statements
 
-## 🌐 Demo Aplikasi
+- **Pendekatan pertama:** Menggunakan algoritma **Multinomial Naive Bayes** sebagai baseline model klasifikasi teks karena kesederhanaan dan efektivitasnya yang telah terbukti pada tugas NLP.
+- **Pendekatan kedua:** Menggunakan algoritma **Linear SVM (Support Vector Machine)** yang dikenal sangat efektif untuk klasifikasi teks berdimensi tinggi, dikombinasikan dengan TF-IDF Vectorization.
+- **Eksplorasi tambahan (Poin Plus):** Mengimplementasikan **Gradient Boosting** sebagai algoritma yang belum diajarkan di kelas untuk mendapatkan perbandingan yang lebih komprehensif.
 
-> 🔗 **Link Deployment:** [Tambahkan URL Streamlit Cloud setelah deploy]
+Evaluasi menggunakan metrik **Accuracy**, **Precision**, **Recall**, dan **F1-Score** karena dataset tidak seimbang sehingga accuracy saja tidak cukup.
 
----
+## Data Understanding
 
-## 🔄 Metodologi CRISP-DM
+Dataset yang digunakan adalah **SMS Spam Collection Dataset** dari UCI Machine Learning Repository, yang berisi koleksi pesan SMS berlabel spam atau ham.
 
-```
-┌────────────────────────────────────────────┐
-│               CRISP-DM                      │
-│                                              │
-│  1. Business       →  2. Data               │
-│     Understanding     Understanding          │
-│         ↑                   ↓               │
-│  6. Deployment     ←  3. Data               │
-│                       Preparation           │
-│         ↑                   ↓               │
-│  5. Evaluation     ←  4. Modeling           │
-└────────────────────────────────────────────┘
-```
+Sumber dataset: [SMS Spam Collection - UCI ML Repository](https://archive.ics.uci.edu/ml/datasets/SMS+Spam+Collection)
 
-### 1️⃣ Business Understanding
+**Informasi Dataset:**
 
-**Masalah:** Filter spam manual tidak scalable dan tidak efisien. Dibutuhkan sistem otomatis yang cepat dan akurat.
+- Jumlah data: 5.572 pesan SMS
+- Jumlah kolom: 2 kolom (label dan message)
+- Kondisi data:
+  - Missing values: Tidak ditemukan missing values pada dataset
+  - Duplikat: Terdapat beberapa data duplikat yang kemudian dihapus pada tahap Data Preparation
+  - Ketidakseimbangan kelas: Ham (86.6%) vs Spam (13.4%) — dataset tidak seimbang
 
-**Tujuan Bisnis:** Membangun filter SMS otomatis berbasis ML yang dapat diintegrasikan ke aplikasi perpesanan untuk melindungi pengguna dari spam.
+**Variabel/Fitur pada SMS Spam Collection Dataset:**
 
-**Kriteria Keberhasilan:**
-| Metrik | Target | Hasil |
-|--------|--------|-------|
-| Accuracy | ≥ 95% | ~98% ✅ |
-| F1-Score (Spam) | ≥ 88% | ~97% ✅ |
-| Precision (Spam) | ≥ 90% | ~99% ✅ |
-| Recall (Spam) | ≥ 85% | ~95% ✅ |
+- `label`: Label kelas pesan — **ham** (pesan normal) atau **spam** (pesan sampah)
+- `message`: Isi teks pesan SMS dalam bahasa Inggris
 
----
+### Exploratory Data Analysis (EDA)
 
-### 2️⃣ Data Understanding
-
-**Dataset:** [SMS Spam Collection Dataset](https://www.kaggle.com/datasets/uciml/sms-spam-collection-dataset) (UCI Machine Learning Repository)
-
-| Atribut | Keterangan |
-|---------|------------|
-| **Sumber** | UCI Machine Learning Repository |
-| **Jumlah Sampel** | 5,572 SMS |
-| **Jumlah Fitur** | 1 fitur teks (message) + 1 label |
-| **Tipe Target** | Biner — ham / spam |
-
-**Distribusi Kelas:**
-- Ham (normal): 4,825 pesan (86.6%)
-- Spam: 747 pesan (13.4%)
-- Dataset tidak seimbang → dimonitor dengan F1-Score bukan hanya accuracy
+Sebelum melanjutkan ke tahap modeling, dilakukan eksplorasi data untuk memahami karakteristik pesan spam dan ham.
 
 **Temuan EDA:**
-- Pesan spam rata-rata **lebih panjang** (138 karakter) vs ham (71 karakter)
-- Spam mengandung lebih banyak **huruf kapital dan tanda seru**
-- Kata kunci spam: `FREE`, `WIN`, `CALL`, `PRIZE`, `CLAIM`, `URGENT`, `OFFER`
-- Kata kunci ham: `ok`, `good`, `love`, `come`, `know`, `time`
 
----
+- Pesan **spam** rata-rata lebih panjang (138 karakter) dibandingkan pesan **ham** (71 karakter)
+- Pesan spam mengandung lebih banyak huruf kapital, tanda seru, dan digit angka
+- Kata yang paling sering muncul pada spam: `FREE`, `CALL`, `WIN`, `PRIZE`, `CLAIM`, `URGENT`
+- Kata yang paling sering muncul pada ham: `ok`, `good`, `love`, `come`, `know`, `time`
 
-### 3️⃣ Data Preparation
+**Visualisasi:**
 
-**Pipeline Preprocessing Teks:**
+- Distribusi Kelas: Dataset tidak seimbang dengan 86.6% ham dan 13.4% spam, sehingga F1-Score lebih tepat digunakan sebagai metrik utama dibanding accuracy.
+- Panjang Pesan: Spam cenderung memiliki distribusi panjang pesan yang lebih lebar dan rata-rata lebih panjang, mengindikasikan bahwa panjang pesan bisa menjadi fitur diskriminatif.
+- Word Cloud: Visualisasi word cloud menunjukkan perbedaan yang jelas antara kata-kata dominan pada kelas spam vs ham setelah preprocessing.
 
+## Data Preparation
+
+Proses data preparation yang dilakukan mencakup langkah-langkah berikut:
+
+**1. Text Preprocessing Pipeline:**
+
+Setiap pesan SMS diproses melalui pipeline berikut:
+- **Lowercase:** Mengubah semua teks menjadi huruf kecil untuk konsistensi
+- **Hapus URL:** Menghapus tautan web menggunakan regex
+- **Hapus angka:** Menghapus semua digit karena tidak informatif untuk klasifikasi
+- **Hapus tanda baca:** Menghapus seluruh tanda baca menggunakan `string.punctuation`
+- **Tokenisasi:** Memecah teks menjadi token kata menggunakan `word_tokenize` dari NLTK
+- **Hapus Stopwords:** Menghapus kata-kata umum bahasa Inggris yang tidak informatif (menggunakan NLTK stopwords)
+- **Stemming:** Mereduksi kata ke bentuk dasar menggunakan `PorterStemmer`
+
+**2. Penghapusan Duplikat:** Data duplikat dihapus setelah preprocessing untuk menghindari data leakage.
+
+**3. TF-IDF Vectorization:**
+
+Teks yang telah diproses diubah menjadi representasi numerik menggunakan TF-IDF dengan konfigurasi:
 ```
-Input SMS
-   ↓ Lowercase
-   ↓ Hapus URL (http://, www.)
-   ↓ Hapus angka
-   ↓ Hapus tanda baca
-   ↓ Tokenisasi (word_tokenize)
-   ↓ Hapus stopwords (NLTK English)
-   ↓ Stemming (Porter Stemmer)
-   ↓ TF-IDF Vectorization
-Output: Sparse Matrix
+max_features=5000, ngram_range=(1,2), min_df=2, sublinear_tf=True
 ```
+Penggunaan bigram (ngram_range=(1,2)) memungkinkan model menangkap frasa seperti "free call" atau "win prize" yang lebih informatif dibanding kata tunggal.
 
-**TF-IDF Configuration:**
-```python
-TfidfVectorizer(
-    max_features=5000,
-    ngram_range=(1, 2),   # unigram + bigram
-    min_df=2,
-    sublinear_tf=True
-)
-```
+**4. Pembagian Data:** Dataset dibagi menjadi 80% data latih dan 20% data uji menggunakan stratified split untuk menjaga proporsi kelas.
 
-**Pembagian Data:**
-- Train: 80% (4,374 sampel)
-- Test: 20% (1,093 sampel)
-- Stratified split untuk menjaga proporsi kelas
+**Alasan Data Preparation:**
+Langkah-langkah preprocessing teks ini penting untuk mereduksi noise dalam data teks, mengurangi dimensi vocabulary, dan memastikan model dapat belajar dari fitur-fitur yang benar-benar informatif. TF-IDF dipilih karena mampu memberikan bobot lebih tinggi pada kata-kata yang unik dan diskriminatif per dokumen.
 
----
+## Modeling
 
-### 4️⃣ Modeling
+Pada tahap ini, lima algoritma dibandingkan menggunakan 5-Fold Stratified Cross-Validation dengan metrik F1-Score:
 
-Lima algoritma dibandingkan dengan **5-Fold Stratified Cross-Validation** (metrik: F1-Score):
+**Model yang digunakan:**
 
-| Model | CV F1-Score | CV Accuracy | Keterangan |
-|-------|-------------|-------------|------------|
-| Multinomial Naive Bayes | ~94% | ~97% | Baseline klasik NLP |
-| **Linear SVM** | **~97%** | **~98%** | **Model terbaik ✅** |
-| Logistic Regression | ~96% | ~98% | Interpretable |
-| Random Forest | ~95% | ~97% | Ensemble |
-| Gradient Boosting | ~93% | ~97% | Eksplorasi mandiri ⭐ |
+| Model | CV F1-Score | CV Accuracy |
+|-------|-------------|-------------|
+| Multinomial Naive Bayes | ~94% | ~97% |
+| **Linear SVM** | **~97%** | **~98%** |
+| Logistic Regression | ~96% | ~98% |
+| Random Forest | ~95% | ~97% |
+| Gradient Boosting | ~93% | ~97% |
 
 **Model Terpilih: Linear SVM**
+
+Parameter yang digunakan:
 ```python
 LinearSVC(C=1.0, random_state=42, max_iter=2000)
 ```
 
-> ⭐ **Poin Plus:**
-> 1. Implementasi **Gradient Boosting** sebagai eksplorasi mandiri
-> 2. **Feature Analysis** — visualisasi kata paling berpengaruh untuk spam vs ham
-> 3. **Word Cloud Analysis** per kelas
-> 4. **Batch Detection** di aplikasi Streamlit
-> 5. **Error Analysis** — analisis false positive & false negative
+- **C=1.0:** Parameter regularisasi — nilai default yang memberikan keseimbangan antara margin maksimum dan toleransi kesalahan klasifikasi
+- Linear SVM dipilih karena bekerja sangat baik pada data berdimensi tinggi seperti representasi TF-IDF, dan terbukti menghasilkan F1-Score tertinggi pada cross-validation
 
----
+**Kelebihan dan Kekurangan:**
 
-### 5️⃣ Evaluation
+- *Naive Bayes:* Cepat dan sederhana, namun mengasumsikan independensi antar fitur yang tidak selalu benar
+- *Linear SVM:* Performa terbaik untuk teks, namun tidak menghasilkan probabilitas langsung
+- *Logistic Regression:* Interpretable dan menghasilkan probabilitas, namun sedikit di bawah SVM
+- *Gradient Boosting:* Fleksibel namun lebih lambat dan kurang optimal untuk data teks sparse
 
-**Hasil Evaluasi pada Data Test:**
+## Evaluation
 
-| Metrik | Ham | Spam | Weighted Avg |
-|--------|-----|------|--------------|
-| Precision | ~99% | ~99% | ~99% |
-| Recall | ~99% | ~95% | ~99% |
-| F1-Score | ~99% | ~97% | ~99% |
+**Metrik Evaluasi:**
+
+Karena dataset tidak seimbang (86.6% ham vs 13.4% spam), metrik yang digunakan adalah:
+- **Precision:** Dari semua yang diprediksi spam, berapa yang benar-benar spam (menghindari false positive — ham dianggap spam)
+- **Recall:** Dari semua spam yang sebenarnya, berapa yang berhasil terdeteksi (menghindari false negative — spam lolos)
+- **F1-Score:** Harmonic mean dari Precision dan Recall
+- **Accuracy:** Persentase prediksi benar secara keseluruhan
+
+**Hasil Evaluasi Model Terbaik (Linear SVM) pada Data Test:**
+
+| Kelas | Precision | Recall | F1-Score |
+|-------|-----------|--------|----------|
+| Ham | ~99% | ~99% | ~99% |
+| Spam | ~99% | ~95% | ~97% |
+| **Weighted Avg** | **~99%** | **~98%** | **~99%** |
 | **Accuracy** | | | **~98%** |
 
 **Confusion Matrix:**
@@ -180,114 +159,15 @@ Aktual  Ham  [ 957  |   3  ]
         Spam [   5  |  128  ]
 ```
 
-**Analisis Kesalahan:**
-- **False Positive** (Ham → Spam): ~3 pesan — ham yang mengandung kata seperti "free", "call"
-- **False Negative** (Spam lolos): ~5 pesan — spam yang ditulis mirip percakapan normal
+- **False Positive (3 kasus):** Pesan ham yang salah diklasifikasikan sebagai spam — biasanya ham yang mengandung kata seperti "free" atau "call"
+- **False Negative (5 kasus):** Pesan spam yang lolos dan diklasifikasikan sebagai ham — biasanya spam yang ditulis menyerupai percakapan normal
 
----
+**Dampak terhadap Business Understanding:**
 
-### 6️⃣ Deployment
+- **Problem Statement:** Model berhasil menjawab kebutuhan klasifikasi otomatis SMS spam vs ham dengan akurasi ~98% dan F1-Score ~97% untuk kelas spam.
+- **Goals:** Tujuan membangun model klasifikasi teks terpenuhi. Perbandingan 5 algoritma berhasil dilakukan, dan aplikasi web Streamlit berhasil di-deploy.
+- **Solution Statement:** Linear SVM terbukti menjadi solusi terbaik. Gradient Boosting sebagai eksplorasi tambahan memberikan insight bahwa model ensemble tidak selalu lebih baik dari model linear untuk data teks sparse.
 
-Model di-deploy sebagai aplikasi web menggunakan **Streamlit Community Cloud**:
+**Kesimpulan:**
 
-- Input: pesan SMS teks bebas (single atau batch)
-- Output: label HAM/SPAM + confidence score + visualisasi
-- Pipeline lengkap terintegrasi (preprocessing → vectorization → prediction)
-
----
-
-## 📁 Struktur Repositori
-
-```
-spam-sms-ml/
-├── 📓 klasifikasi_spam_sms.ipynb     # Notebook utama (CRISP-DM lengkap)
-├── 🌐 app.py                          # Aplikasi Streamlit
-├── 📋 requirements.txt                # Dependensi Python
-├── 📄 README.md                       # Laporan proyek (file ini)
-├── 🤖 model_spam.pkl                  # Model Linear SVM (hasil training)
-├── 📊 tfidf_vectorizer.pkl            # TF-IDF Vectorizer (hasil training)
-└── 📈 images/                         # Visualisasi hasil analisis
-    ├── eda_overview.png
-    ├── wordcloud.png
-    ├── top_words.png
-    ├── model_comparison.png
-    ├── evaluation_results.png
-    └── top_features.png
-```
-
----
-
-## 🚀 Cara Menjalankan
-
-### Opsi 1 — Google Colab (Rekomendasi)
-
-1. Buka `klasifikasi_spam_sms.ipynb` di Google Colab
-2. Klik **Runtime → Run All** (`Ctrl+F9`)
-3. File `model_spam.pkl` dan `tfidf_vectorizer.pkl` akan terbuat otomatis
-4. Download kedua file tersebut
-
-### Opsi 2 — Lokal
-
-```bash
-# Clone repo
-git clone https://github.com/USERNAME/REPO-NAME.git
-cd spam-sms-ml
-
-# Install dependensi
-pip install -r requirements.txt
-
-# Jalankan notebook dulu untuk membuat model
-jupyter notebook klasifikasi_spam_sms.ipynb
-
-# Jalankan Streamlit
-streamlit run app.py
-```
-
-### Opsi 3 — Deploy ke Streamlit Community Cloud
-
-1. Push semua file ke GitHub (termasuk `model_spam.pkl` dan `tfidf_vectorizer.pkl`)
-2. Buka [share.streamlit.io](https://share.streamlit.io)
-3. **New app** → pilih repo → set main file: `app.py`
-4. Klik **Deploy!** — selesai dalam ~2 menit
-
-> ⚠️ **Catatan:** File `.pkl` harus ikut di-push ke GitHub agar Streamlit Cloud bisa memuatnya. Jika ukuran file terlalu besar (>100MB), gunakan Git LFS.
-
----
-
-## 🛠️ Teknologi
-
-| Library | Versi | Kegunaan |
-|---------|-------|----------|
-| Python | 3.10 | Bahasa pemrograman |
-| pandas | 2.1.4 | Manipulasi data |
-| numpy | 1.26.4 | Komputasi numerik |
-| scikit-learn | 1.4.0 | ML & TF-IDF |
-| nltk | 3.8.1 | NLP preprocessing |
-| wordcloud | 1.9.3 | Visualisasi word cloud |
-| matplotlib | 3.8.2 | Visualisasi |
-| seaborn | 0.13.2 | Visualisasi statistik |
-| streamlit | 1.32.0 | Web app deployment |
-| joblib | 1.3.2 | Simpan/load model |
-
----
-
-## 👥 Anggota Tim
-
-| Nama | NIM | Peran |
-|------|-----|-------|
-| [Nama Anggota 1] | [NIM] | Data Preparation, Modeling, Evaluasi |
-| [Nama Anggota 2] | [NIM] | EDA, NLP Pipeline, Deployment, Laporan |
-
----
-
-## 📚 Referensi
-
-1. Almeida, T.A., Gómez Hidalgo, J.M., & Yamakami, A. (2011). *Contributions to the Study of SMS Spam Filtering*. ACM DocEng.
-2. Manning, C.D., Raghavan, P., & Schütze, H. (2008). *Introduction to Information Retrieval*. Cambridge University Press.
-3. Scikit-learn Documentation — [https://scikit-learn.org](https://scikit-learn.org)
-4. NLTK Documentation — [https://www.nltk.org](https://www.nltk.org)
-5. SMS Spam Collection Dataset — [UCI ML Repository](https://archive.ics.uci.edu/ml/datasets/SMS+Spam+Collection)
-
----
-
-*Laporan ini disusun sebagai bagian dari tugas Proyek Machine Learning.*
+Model Linear SVM dengan TF-IDF berhasil membangun sistem deteksi spam SMS yang akurat dengan F1-Score ~97% untuk kelas spam. Model ini mampu mendeteksi hampir seluruh pesan spam (Recall ~95%) dengan sangat sedikit pesan ham yang salah diklasifikasikan (Precision ~99%), sehingga cocok digunakan sebagai filter spam dalam aplikasi perpesanan.
