@@ -106,9 +106,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# ============================================================
 # SIDEBAR
-# ============================================================
 with st.sidebar:
     st.header("ℹ️ Tentang Aplikasi")
     st.info(
@@ -147,9 +145,7 @@ with st.sidebar:
     if st.button("Gunakan contoh ini", use_container_width=True):
         st.session_state['example_text'] = examples[selected]
 
-# ============================================================
 # MAIN — INPUT
-# ============================================================
 if not model_loaded:
     st.error(
         "Model tidak ditemukan! Jalankan notebook terlebih dahulu "
@@ -177,9 +173,7 @@ with col_btn2:
         st.session_state['example_text'] = ''
         st.rerun()
 
-# ============================================================
 # PREDIKSI
-# ============================================================
 if detect_btn:
     if not user_input.strip():
         st.warning("⚠️ Pesan tidak boleh kosong!")
@@ -254,9 +248,7 @@ if detect_btn:
         </div>
         """, unsafe_allow_html=True)
 
-# ============================================================
-# BATCH DETECTION
-# ============================================================
+
 st.markdown("---")
 with st.expander("📋 Deteksi Beberapa Pesan Sekaligus (Batch)"):
     st.markdown("Masukkan beberapa pesan, **satu per baris**:")
@@ -283,8 +275,5 @@ with st.expander("📋 Deteksi Beberapa Pesan Sekaligus (Batch)"):
         else:
             st.warning("Masukkan minimal 1 pesan!")
 
-# ============================================================
-# FOOTER
-# ============================================================
 st.markdown("---")
 st.caption("🎓 Proyek Machine Learning — Klasifikasi Spam SMS | Metodologi CRISP-DM | NLP + Linear SVM")
